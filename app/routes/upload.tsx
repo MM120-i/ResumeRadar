@@ -65,7 +65,8 @@ const upload = () => {
       resumePath: uploadedFile.path,
       imagePath: uploadedImage.path,
       companyName,
-      jobTitle: jobDescription,
+      jobTitle,
+      jobDescription,
       feedback: "",
     };
 
