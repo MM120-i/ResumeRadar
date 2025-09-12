@@ -12,4 +12,4 @@ export function formatSize(bytes: number): string {
 }
 
 // Generates a ranom UUID
-export const generateUUID = () => crypto.randomUUID;
+export const generateUUID = () => crypto.randomUUID();

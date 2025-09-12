@@ -60,7 +60,6 @@ const upload = () => {
 
     setStatusText("Preapring data ...");
     const uuid = generateUUID();
-
     const data = {
       id: uuid,
       resumePath: uploadedFile.path,
@@ -78,8 +77,10 @@ const upload = () => {
       prepareInstructions({ jobTitle, jobDescription })
     );
 
-    if (!feedback) {
-      return setStatusText("Error: Failed to analyze resume");
+    if (!feedback || !feedback.message) {
+      setStatusText("Error: failed to analyze resume");
+      setIsProcessing(false);
+      return;
     }
 
     const feedbackText =
@@ -90,6 +91,7 @@ const upload = () => {
     data.feedback = JSON.parse(feedbackText);
     await kv.set(`resume:${uuid}`, JSON.stringify(data));
     setStatusText("Analysis Complete, redirecting ...");
+    navigate(`/resume/${uuid}`);
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {

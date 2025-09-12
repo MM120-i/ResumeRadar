@@ -350,7 +350,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
           ],
         },
       ],
-      { model: "claude-sonnet-4" } // can also try claude-3-7-sonnet
+      { model: "claude-3-7-sonnet" } // can look at https://docs.puter.com/AI/chat/ for more AI model options
     ) as Promise<AIResponse | undefined>;
   };
 

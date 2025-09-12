@@ -23,6 +23,11 @@ export default function Home() {
     }
   }, [auth.isAuthenticated]);
 
+  const handleSignOut = async () => {
+    await auth.signOut();
+    navigate("/auth?next=/");
+  };
+
   return (
     <main className="bg-[url('/images/bg-main.svg')] bg-cover">
       <Navbar />
@@ -30,6 +35,11 @@ export default function Home() {
         <div className="page-heading py-16">
           <h1>Track Your Applications & Resume Ratings</h1>
           <h2>Review your submissions and check AI-powered feedback.</h2>
+          {auth.isAuthenticated && (
+            <button className="auth-button" onClick={handleSignOut}>
+              <p>Log Out</p>
+            </button>
+          )}
         </div>
 
         {resumes.length > 0 && (
