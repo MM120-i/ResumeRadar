@@ -55,6 +55,17 @@ export default function Home() {
             <h2>Review your submissions and check AI-powered feedback.</h2>
           )}
         </div>
+
+        <Link
+          to="/wipe"
+          className="danger-bottom mt-2 px-4 py-2 rounded text-white bg-red-600 hover:bg-red-700 transition"
+          style={{
+            display: "inline-block",
+          }}
+        >
+          Delete Resume
+        </Link>
+
         {loadingResumes && (
           <div className="flex flex-col items-center justify-center">
             <img src="/images/resume-scan-2.gif" className="w-[200px]" />

@@ -1,61 +1,55 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import { usePuterStore } from "~/lib/puter";
 
-// TODO: Make this look nice and consistent
 const WipeApp = () => {
-  const { auth, isLoading, error, fs, kv } = usePuterStore();
+  const { kv } = usePuterStore();
   const navigate = useNavigate();
-  const [files, setFiles] = useState<FSItem[]>([]);
+  const [isWiping, setIsWiping] = useState(false);
+  const [status, setStatus] = useState("");
 
-  const loadFiles = async () => {
-    const files = (await fs.readDir("./")) as FSItem[];
-    setFiles(files);
-  };
+  const handleWipe = async () => {
+    setIsWiping(true);
+    setStatus("");
 
-  useEffect(() => {
-    loadFiles();
-  }, []);
-
-  useEffect(() => {
-    if (!isLoading && !auth.isAuthenticated) {
-      navigate("/auth?next=/wipe");
+    try {
+      await kv.flush();
+      setStatus("All data wiped successfully");
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
+    } catch (error) {
+      setStatus("Failed to wipe data. Please try again.");
     }
-  }, [isLoading]);
 
-  const handleDelete = async () => {
-    files.forEach(async (file) => {
-      await fs.delete(file.path);
-    });
-
-    await kv.flush();
-    loadFiles();
+    setIsWiping(false);
   };
-
-  if (isLoading) {
-    return <div>Loading ...</div>;
-  } else if (error) {
-    return <div>Error {error}</div>;
-  }
 
   return (
-    <div>
-      Authenticated as: {auth.user?.username}
-      <div>Existing files:</div>
-      <div className="flex flex-col gap-4">
-        {files.map((file) => (
-          <div key={file.id} className="flex flex-row gap-4">
-            <p>{file.name}</p>
-          </div>
-        ))}
-      </div>
-      <div>
-        <button
-          className="bg-blue-500 text-white px-4 py-2 rounded-md cursor-pointer gap-y-10"
-          onClick={() => handleDelete()}
-        >
-          Wipe App Data
-        </button>
+    <div className="flex items-center justify-center min-h-screen bg-gray-50 bg-[url('/images/bg-main.svg')] bg-cover">
+      <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full text-center">
+        <h1 className="text-2xl font-bold text-red-600 mb-4">Wipe All Data</h1>
+        <p className="mb-6 text-gray-700">
+          <strong>Warning:</strong> This will permanently delete all your
+          resumes and feedback. This action cannot be undone.
+        </p>
+
+        <div className="flex justify-center gap-4 mt-6">
+          <button
+            className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded transition disabled:opacity-50"
+            onClick={handleWipe}
+            disabled={isWiping}
+          >
+            {isWiping ? "Wiping..." : "Confirm Wipe"}
+          </button>
+          {status && <div className="mt-4 text-sm text-gray-800">{status}</div>}
+          <button
+            className="mt-6 text-blue-600 hover:underline"
+            onClick={() => navigate("/")}
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   );
