@@ -14,6 +14,7 @@ const AccordionContext = createContext<AccordionContextType | undefined>(
 
 const useAccordion = () => {
   const context = useContext(AccordionContext);
+
   if (!context) {
     throw new Error("Accordion components must be used within an Accordion");
   }
@@ -67,7 +68,6 @@ interface AccordionItemProps {
 }
 
 export const AccordionItem: React.FC<AccordionItemProps> = ({
-  id,
   children,
   className = "",
 }) => {

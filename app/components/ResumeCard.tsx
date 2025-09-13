@@ -38,7 +38,6 @@ const ResumeCard = ({
           )}
           {jobTitle && (
             <h3 className="text-lg break-words text-gray-500">
-              {/* change this to just "jobTitle" once deletion of resume and data is implemented */}
               {jobTitle.split("-")[0].trim().slice(0, 50)}
             </h3>
           )}

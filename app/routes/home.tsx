@@ -19,7 +19,9 @@ export default function Home() {
   const [loadingResumes, setLoadingResumes] = useState(false);
 
   useEffect(() => {
-    if (!auth.isAuthenticated) navigate("/auth?next=/");
+    if (!auth.isAuthenticated) {
+      navigate("/auth?next=/");
+    }
   }, [auth.isAuthenticated]);
 
   useEffect(() => {

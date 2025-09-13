@@ -9,8 +9,13 @@ let isLoading = false;
 let loadPromise: Promise<any> | null = null;
 
 async function loadPdfJs(): Promise<any> {
-  if (pdfjsLib) return pdfjsLib;
-  if (loadPromise) return loadPromise;
+  if (pdfjsLib) {
+    return pdfjsLib;
+  }
+
+  if (loadPromise) {
+    return loadPromise;
+  }
 
   isLoading = true;
   // @ts-expect-error - pdfjs-dist/build/pdf.mjs is not a module
