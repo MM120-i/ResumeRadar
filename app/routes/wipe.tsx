@@ -1,29 +1,55 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { usePuterStore } from "~/lib/puter";
 
 const WipeApp = () => {
-  const { kv } = usePuterStore();
+  const { auth, isLoading, error, fs, kv } = usePuterStore();
   const navigate = useNavigate();
   const [isWiping, setIsWiping] = useState(false);
   const [status, setStatus] = useState("");
+  const [files, setFiles] = useState<FSItem[]>([]);
 
-  const handleWipe = async () => {
+  const loadFiles = async () => {
+    const files = (await fs.readDir("./")) as FSItem[];
+    setFiles(files);
+  };
+
+  useEffect(() => {
+    loadFiles();
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading && !auth.isAuthenticated) {
+      navigate("/auth?next=/wipe");
+    }
+  }, [isLoading]);
+
+  const handleDelete = async () => {
     setIsWiping(true);
     setStatus("");
 
     try {
+      files.forEach(async (file) => {
+        await fs.delete(file.path);
+      });
+
       await kv.flush();
       setStatus("All data wiped successfully");
+      loadFiles();
+
       setTimeout(() => {
         navigate("/");
       }, 1500);
     } catch (error) {
       setStatus("Failed to wipe data. Please try again.");
     }
-
-    setIsWiping(false);
   };
+
+  if (isLoading) {
+    return <div>Loading ...</div>;
+  } else if (error) {
+    return <div>Error {error}</div>;
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 bg-[url('/images/bg-main.svg')] bg-cover">
@@ -37,7 +63,7 @@ const WipeApp = () => {
         <div className="flex justify-center gap-4 mt-6">
           <button
             className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded transition disabled:opacity-50"
-            onClick={handleWipe}
+            onClick={handleDelete}
             disabled={isWiping}
           >
             {isWiping ? "Wiping..." : "Confirm Wipe"}
