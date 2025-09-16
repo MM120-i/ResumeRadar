@@ -18,6 +18,11 @@ export default function Home() {
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [loadingResumes, setLoadingResumes] = useState(false);
 
+  const handleLogout = async () => {
+    await auth.signOut();
+    navigate("/auth?next=/");
+  };
+
   useEffect(() => {
     if (!auth.isAuthenticated) {
       navigate("/auth?next=/");
@@ -46,7 +51,7 @@ export default function Home() {
       <Navbar />
 
       <section className="main-section">
-        <div className="page-heading py-16">
+        <div className="page-heading py-16 relative">
           <h1>Track Your Applications & Resume Ratings</h1>
 
           {!loadingResumes && resumes?.length === 0 ? (
@@ -66,6 +71,18 @@ export default function Home() {
           Delete Resume
         </Link>
 
+        {auth.isAuthenticated && (
+          <button
+            onClick={handleLogout}
+            className="absolute top-4 right-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-200 cursor-pointer"
+            style={{
+              zIndex: 10,
+            }}
+          >
+            Log Out
+          </button>
+        )}
+
         {loadingResumes && (
           <div className="flex flex-col items-center justify-center">
             <img src="/images/resume-scan-2.gif" className="w-[200px]" />
@@ -81,7 +98,7 @@ export default function Home() {
         )}
 
         {!loadingResumes && resumes?.length === 0 && (
-          <div className="flex flex-col items-center justify-center mt-10 gap-4">
+          <div className="flex flex-col items-center justify-center  gap-4">
             <Link
               to="/upload"
               className="primary-button w-fit text-xl font-semibold"
